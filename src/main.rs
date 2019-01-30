@@ -2,30 +2,25 @@ use aws_lambda_events::event::sns::SnsEvent;
 use lambda_runtime::{error::LambdaErrorExt, lambda, Context};
 use std::error::Error;
 use std::fmt;
-use std::result;
-
-pub type BoxedResult<T> = result::Result<T, Box<Error>>;
 
 #[derive(Debug, Clone)]
-pub struct BoxedErr {
+pub struct CustomError {
     msg: String,
 }
 
-impl BoxedErr {
-    pub fn with<T, S: Into<String>>(msg: S) -> BoxedResult<T> {
-        let e = Self { msg: msg.into() };
-
-        Err(e.into())
+impl CustomError {
+    pub fn new<S: Into<String>>(msg: S) -> Self {
+        Self { msg: msg.into() }
     }
 }
 
-impl fmt::Display for BoxedErr {
+impl fmt::Display for CustomError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.msg)
     }
 }
 
-impl Error for BoxedErr {
+impl Error for CustomError {
     fn description(&self) -> &str {
         &self.msg
     }
@@ -36,13 +31,13 @@ impl Error for BoxedErr {
     }
 }
 
-impl LambdaErrorExt for BoxedErr {
+impl LambdaErrorExt for CustomError {
     fn error_type(&self) -> &str {
         &self.msg
     }
 }
 
-fn send_slack_msg(msg: &str) -> BoxedResult<()> {
+fn send_slack_msg(msg: &str) -> Result<(), CustomError> {
     use dotenv::dotenv;
     use slack_hook::{PayloadBuilder, Slack};
     use std::env;
@@ -63,11 +58,11 @@ fn send_slack_msg(msg: &str) -> BoxedResult<()> {
 
     match slack.send(&p) {
         Ok(()) => Ok(()),
-        Err(x) => BoxedErr::with(x.to_string()),
+        Err(x) => Err(CustomError::new(x.to_string())),
     }
 }
 
-fn handler(event: SnsEvent, ctx: Context) -> BoxedResult<()> {
+fn handler(event: SnsEvent, _: Context) -> Result<(), CustomError> {
     for record in event.records {
         if let Some(msg) = record.sns.message {
             send_slack_msg(&msg)?;
@@ -76,7 +71,7 @@ fn handler(event: SnsEvent, ctx: Context) -> BoxedResult<()> {
     Ok(())
 }
 
-fn main() -> BoxedResult<()> {
+fn main() -> Result<(), Box<dyn Error>> {
     lambda!(handler);
     Ok(())
 }
