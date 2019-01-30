@@ -1,0 +1,11 @@
+[package]
+name = "sns-to-slack-lambda"
+version = "0.1.0"
+authors = ["snowiow <marcel.patzwahl+github@posteo.de>"]
+edition = "2018"
+
+[dependencies]
+lambda_runtime = "0.2.0"
+aws_lambda_events = "0.2.1"
+slack-hook = "0.7"
+dotenv = "0.13.0"
