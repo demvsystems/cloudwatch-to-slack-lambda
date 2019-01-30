@@ -1,5 +1,7 @@
 use aws_lambda_events::event::sns::SnsEvent;
+use dotenv::dotenv;
 use lambda_runtime::{error::LambdaErrorExt, lambda, Context};
+use std::env;
 use std::error::Error;
 use std::fmt;
 
@@ -37,12 +39,19 @@ impl LambdaErrorExt for CustomError {
     }
 }
 
-fn send_slack_msg(msg: &str) -> Result<(), CustomError> {
-    use dotenv::dotenv;
-    use slack_hook::{PayloadBuilder, Slack};
+fn get_log_level() -> log::Level {
     use std::env;
+    match env::var("LOG_LEVEL").unwrap_or("info".to_string()).as_ref() {
+        "trace" => log::Level::Trace,
+        "error" => log::Level::Error,
+        "debug" => log::Level::Debug,
+        "warn" => log::Level::Warn,
+        _ => log::Level::Info,
+    }
+}
 
-    dotenv().ok();
+fn send_slack_msg(msg: &str) -> Result<(), CustomError> {
+    use slack_hook::{PayloadBuilder, Slack};
 
     let webhook = env::var("SLACK_WEBHOOK").unwrap();
     let channel_name = env::var("CHANNEL_NAME").unwrap();
@@ -63,15 +72,22 @@ fn send_slack_msg(msg: &str) -> Result<(), CustomError> {
 }
 
 fn handler(event: SnsEvent, _: Context) -> Result<(), CustomError> {
+    use log::error;
+
     for record in event.records {
         if let Some(msg) = record.sns.message {
-            send_slack_msg(&msg)?;
+            if let Err(err) = send_slack_msg(&msg) {
+                error!("{}", err);
+                return Err(err);
+            }
         }
     }
     Ok(())
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
+    dotenv().ok();
+    simple_logger::init_with_level(get_log_level()).unwrap();
     lambda!(handler);
     Ok(())
 }
