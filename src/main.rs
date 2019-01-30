@@ -82,6 +82,6 @@ mod tests {
 
     #[test]
     fn test_send_slack_msg() {
-        send_slack_msg("Successfully executed Unit Test");
+        assert!(send_slack_msg("Successfully executed Unit Test").is_ok());
     }
 }
