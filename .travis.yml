@@ -1,29 +1,28 @@
 language: rust
 rust:
-  - stable
+- stable
 install:
-  - rustup component add rustfmt
-  - rustup component add clippy
+- rustup component add rustfmt
+- rustup component add clippy
 script:
-  - cargo fmt -- --check
-  - cargo clippy
+- cargo fmt -- --check
+- cargo clippy
 services:
-  - docker
+- docker
 cache: cargo
 before_deploy:
-  - docker build -t sns-to-slack-lambda .
-  - docker run -v /tmp/artifacts:/export sns-to-slack-lambda
+- docker build -t sns-to-slack-lambda .
+- docker run -v /tmp/artifacts:/export sns-to-slack-lambda
 deploy:
   provider: s3
-  access_key_id: "$AWS_ACCESS_KEY_ID"
-  secret_access_key: "$AWS_SECRET_ACCESS_KEY"
-  bucket: "$BUCKET_NAME"
+  access_key_id:
+    secure: jeB1mYfpT0hTAbB55vq0jtDR1lrc1M/cAMG50l2f/oucuZl3kKxygbI9OgtHSivgPBSwiaTZOdJFZyAdNC53RCKnC5lfYy2bLXhxwDAVfAzC/oOaJGSkUc5DSBtvP5DeRlKzdsE6NxYWhfCsC3iyStah8jYS5t/vaz2ufTZ1MtfDCZ3OJbvZQ4ClDAvxqp/s/LqWWoUTnHnRUbhF5tB5lT9k11dVqQrUhqu+FeAS7rfJXzLQT4yyt1F5F/8NfEtDN2KnGCh9JtPrs/Lb4nELqhfJZgX0qyDGQQ/rgmtj6rXzmM3Dyww2QeYC2RksxIDMTk3bhPI+9GzGknTJw9mN05hYVYyA/8vVN0wskvsk+4tx7CdqOyvy60ehJJkll3+nwD1HjC76gC0a/M897qmaJsGG5yKFZPE+Mea7NZnox9QecFKH+3WRUvEa1ZdjneuF02/hIz1TIKqmrKF1cIN+xiecXftnoPTie7AF7wqjdj+pfj7BWabN2jDpYdSeV+9dRd6xxsz/LHOp9Mc58GzFNlSVTt10cHmrDxRRwWMoZUK4MxXNRwGAwUegD3vKwUBqIly2evkVNN06d2GvHXIYk9w0HtVMMUJORiiYWViFBhxohS8pPZw9bV2Jw3wZwyO2B0cD5mIbjomk8lhOM+S0MNx5xUPuPXBerGFOY7rQ/eY=
+  secret_access_key:
+    secure: S3rI9ZhQ4S5XLrDlLeyf2Hw9HGkkIKrrhqJruhcxvdUm+G0OLiViFe4iQVcGqQT+rYoAbc82hZoFYbB6QupOKndCn1vIsX7vID45L7bko18vM0aoeK0LTe+TSJb1PQz2BoyrUzP4zps5BGI9Y1g2kMfcI45ITsJRsY9XBTX+htKw4Il3c1x/aBSwrFsZmaT2dmK31K47SKGnOQS4ADqs3ht9QV98qYep3FYuiSYLV9kzq0a9qp/ITvpOavyhJOV/fwRwDFc475uovsDs7Zg3rjoR4812tNbcvJL61eZyvMvtn3Yusl2Q99WoyJmndnj3o7O+e84w40iCxkGnwbwJY71+NcolcvvM9GXrtrYXh31Mw9FigwaK/TPxIFcAqcTTsCe/r4Ddd1tE0klastFZS+k35jxMuAbjZHI+Ji/fxkfA4tB8R6ChyjHE8S2z+k0v7ysvN89dnBh5f3NuKoR3jMdAo7Mensi3lHCEi+NqYelHuXACCTtDwficD0Sk+w/M5gcdazVDkB2hTR3VVbX1s4vn+weEuDJSGNAkKAZO1xDqbC6pu2az1dd0+a5Eb59W5/7iSiVpwtNgqkCjXGucPr9zvK7vgaBxlRdVO+VCne0xMvyFUWyeyLc7r0LV+60viW9VoUJfJh1e/LOtjsX4/kheCLMiHRXZx+dj044YuV0=
+  bucket:
+    secure: Wb7+6B6rrt1LgLe0LZYUZF+CbAYI5Y9xEYv3V/MBQ0ryvecgSHuobib83pXcA+JHrejdO3X9/KLH2iucPoyaMsTby+9rt+6D7WDrPwMUQd34Y68r5i73v9YuoRfDje+pC4mz7Xz56cKfnHoKLrGb+/RjChgibMDQNRGryeGQO080WLoB9l5N8uzpeq/JHZSz9J6oYirS47LeWkmIzLxlAYYWPZyAL6AWKEuMdOKrykRs13A2JV9x5Q86f6UbYrjWuGIttF+p77Ixul/mI7DXZO9UCIVi/jTSXXGXqOQK97Zqib/s91rPyE0t3kWZOy9axrlHov8y5jS/P2qt2/sGSD9ZLJRCiwfrYANTorPWituAETP00egBW6QN74UOeivVftTc4YxgZqNw2tOTd7foDxzuDbgGMhepAtrVxGW1BR7c/idxNGRc7GHhLPdTb9zE5yKOq2vvyLEO1AT7pjlr+RI9VWMEwyMy9ZKt79ECY3gqLMrOX4X1PcRifXntaRigO/S0/iSj0HxTgljswUrrvXQZBj1y2/aO5Ajll/DwUKUhP26PnSgbxzOVaC3LefcJ7AvJuZwV5B5SqhZ2iFZ7OyrkUOx8tJX8Vw0g9sUERXIlglxUlTz6otdAUhH/FcyaeYQrp6qSQHKlKX4AWOCGbh4xk1pu86Hk58fen01goAk=
   skip_cleanup: true
   region: eu-central-1
   local_dir: "/tmp/artifacts/"
   on:
     tags: true
-env:
-  global:
-  - secure: RmahwQZU2OPG4G5fYPt+rIIBeiRnLuq01jdpS9a1FnhrTMRz97lxGgFcSy3rEA4q/QLBUrcD2M55tlOMWRtz7/2lTF0OLFvYjdSGNW8k+Irsig2/iOlN7go8zqjg3u37GwOCAxuP16CSjgf48n07ixglYAU7Mpq0ikDczrIMXZB6k+SZ/wKhKHC/ic3i1CX3ISJiNsyt16Lz/VFLpa9CFQLT00QlNZC3e5Ncq+SHl21HIy7w+SAoiS3bLgMNRYVSk252zbFeK91xxY878Km0JZ7IhU4tb1nByeEXLqh4/tO+4RHUjv6yzw7iDFhvlyraT2FoC5/6YwELhV0r02joWtNalfspAd42XJfMxmrpiYfHWbnX/qk4QYUrx5JbBM6aFoXk2EvHeJpWUJTW0419Ws9wrZ4l71F7xH5Lag0mUv3t7IoepJuKXCyLtwik34sTWEteTU7sAmInq3Gbp/Ezqn0saYkSnyuYQ99d5kQsKr0bsARUHG/ggO2toyUuCBvIhx/8ekxYKvn+bNodN4y1a2oRfU7jysNPeJI/MPEdT1hLWtqxEC8qeEk8vpzsl40dpu9ZqUMDGUnOUxLurEhm+Awdfsz+KNwuWBufN8Bn3O3pQghMQEokiLmR5b8Ojo8OHbAkmubFmyA1pVB9HA3NtcMMFDsIXzXPka1epgwZx8o=
-  - secure: X96r+jGFvsaopny7Eh2lQjj19l4zMI0Q7x4j+eB8F+GG9aOLGcMEURIBdb4ii9TbktmSDZ0qqFb0MWOqwBw/wOzezph8suA13e4Slbsl2YBwBSZpSteF3cxdDJSP8Wqxnzk7eXkob4drxKBJSgFsjXfa9a6Xib/5JPzjofLy0uuXfubhzEOpPNToDbikCb0Az8BD19LTH5tHZrjjNRmbydDefPHgSbWhd5z5B18FGLc32EddFfq9hLhjry80kdSBIFJUbtC5LhCN4Hw5SHiEJAI4QqA8PE5xkmlIdHHxej0yrYFp1+4B+HNVUlMWM8ctqwS8FS93l9P+jkm5kNVgYSYX3KfuT1M1hpMf8BUeEeZSTSlXVlwrVVf4CcIyYCn+az3XSl/aoSp5R1h89puIclPva5SZQvHU4oGMfKdvMRgEBG2a/hpAAs99lQganmG9KkasTuDnLXJEsv8mA+k3/MBp8oN6j8ZmUeS38JrITUIhaumEncxvNH2PMYbdDxl1qH3ZRQXMq3GEoFbxth7Rk1fNOVYKk69QZkGqe4tPynr4s9M9Wn/HUBZOHHfdi6Uyp2e5ChvEfdKdRlMulyP+1TFq2K1iLlYwmCjBdUqeKCwB2NyIlARSQHTHiQVBfsSCkA9ydPy3TUBYYKy+Z6gWGqC0VAwpSoKfJx4s3nDb/vY=
