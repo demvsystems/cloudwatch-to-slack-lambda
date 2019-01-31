@@ -42,7 +42,7 @@ How many information should be logged. Valid values are:
 - debug
 - info
 - warn
-- error
+- error  
 default: info
 
 ## Infrastructure
