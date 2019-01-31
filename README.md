@@ -26,17 +26,17 @@ variables. There is also a log level to be configured. See the
 [.env.dist](https://github.com/demvsystems/sns-to-slack-lambda/blob/master/.env.dist)
 for the exact keys.
 
-### SLACK_WEBHOOK
+#### SLACK_WEBHOOK
 The URL of the webhook to be set. This is provided by Slack, after you setup an
 app. The URL goes like this: https://hooks.slack.com/services/<random hash>
 
-### CHANNEL_NAME
+#### CHANNEL_NAME
 The channel where the SNS messages are posted to.
 
-### USERNAME
+#### USERNAME
 The username as whom the SNS messages are posted.
 
-### LOG_LEVEL
+#### LOG_LEVEL
 How many information should be logged. Valid values are:
 - trace
 - debug
