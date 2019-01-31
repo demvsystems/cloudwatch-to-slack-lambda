@@ -6,8 +6,6 @@ install:
 services:
 - docker
 cache: cargo
-script:
-- cargo test --verbose
 before_deploy:
 - docker build -t sns-to-slack-lambda .
 - docker run -v /tmp/artifacts:/export sns-to-slack-lambda
