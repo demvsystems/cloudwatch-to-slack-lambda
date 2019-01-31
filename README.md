@@ -28,7 +28,7 @@ for the exact keys.
 
 #### SLACK_WEBHOOK
 The URL of the webhook to be set. This is provided by Slack, after you setup an
-app. The URL goes like this: https://hooks.slack.com/services/<random hash>
+app. The URL goes like this: https://hooks.slack.com/services/<random hash\>
 
 #### CHANNEL_NAME
 The channel where the SNS messages are posted to.
