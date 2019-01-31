@@ -1,0 +1,27 @@
+language: rust
+rust:
+- stable
+install:
+- rustup component add rustfmt-preview
+services:
+- docker
+cache: cargo
+script:
+- cargo test --verbose
+before_deploy:
+- docker build -t sns-to-slack-lambda .
+- docker run -v /tmp/artifacts:/export sns-to-slack-lambda
+deploy:
+  provider: s3
+  access_key_id: "$AWS_ACCESS_KEY_ID"
+  secret_access_key: "$AWS_SECRET_ACCESS_KEY"
+  bucket: "$BUCKET_NAME"
+  skip_cleanup: true
+  region: eu-central-1
+  local_dir: "/tmp/artifacts/"
+  on:
+    tags: true
+env:
+  global:
+  - secure: RmahwQZU2OPG4G5fYPt+rIIBeiRnLuq01jdpS9a1FnhrTMRz97lxGgFcSy3rEA4q/QLBUrcD2M55tlOMWRtz7/2lTF0OLFvYjdSGNW8k+Irsig2/iOlN7go8zqjg3u37GwOCAxuP16CSjgf48n07ixglYAU7Mpq0ikDczrIMXZB6k+SZ/wKhKHC/ic3i1CX3ISJiNsyt16Lz/VFLpa9CFQLT00QlNZC3e5Ncq+SHl21HIy7w+SAoiS3bLgMNRYVSk252zbFeK91xxY878Km0JZ7IhU4tb1nByeEXLqh4/tO+4RHUjv6yzw7iDFhvlyraT2FoC5/6YwELhV0r02joWtNalfspAd42XJfMxmrpiYfHWbnX/qk4QYUrx5JbBM6aFoXk2EvHeJpWUJTW0419Ws9wrZ4l71F7xH5Lag0mUv3t7IoepJuKXCyLtwik34sTWEteTU7sAmInq3Gbp/Ezqn0saYkSnyuYQ99d5kQsKr0bsARUHG/ggO2toyUuCBvIhx/8ekxYKvn+bNodN4y1a2oRfU7jysNPeJI/MPEdT1hLWtqxEC8qeEk8vpzsl40dpu9ZqUMDGUnOUxLurEhm+Awdfsz+KNwuWBufN8Bn3O3pQghMQEokiLmR5b8Ojo8OHbAkmubFmyA1pVB9HA3NtcMMFDsIXzXPka1epgwZx8o=
+  - secure: X96r+jGFvsaopny7Eh2lQjj19l4zMI0Q7x4j+eB8F+GG9aOLGcMEURIBdb4ii9TbktmSDZ0qqFb0MWOqwBw/wOzezph8suA13e4Slbsl2YBwBSZpSteF3cxdDJSP8Wqxnzk7eXkob4drxKBJSgFsjXfa9a6Xib/5JPzjofLy0uuXfubhzEOpPNToDbikCb0Az8BD19LTH5tHZrjjNRmbydDefPHgSbWhd5z5B18FGLc32EddFfq9hLhjry80kdSBIFJUbtC5LhCN4Hw5SHiEJAI4QqA8PE5xkmlIdHHxej0yrYFp1+4B+HNVUlMWM8ctqwS8FS93l9P+jkm5kNVgYSYX3KfuT1M1hpMf8BUeEeZSTSlXVlwrVVf4CcIyYCn+az3XSl/aoSp5R1h89puIclPva5SZQvHU4oGMfKdvMRgEBG2a/hpAAs99lQganmG9KkasTuDnLXJEsv8mA+k3/MBp8oN6j8ZmUeS38JrITUIhaumEncxvNH2PMYbdDxl1qH3ZRQXMq3GEoFbxth7Rk1fNOVYKk69QZkGqe4tPynr4s9M9Wn/HUBZOHHfdi6Uyp2e5ChvEfdKdRlMulyP+1TFq2K1iLlYwmCjBdUqeKCwB2NyIlARSQHTHiQVBfsSCkA9ydPy3TUBYYKy+Z6gWGqC0VAwpSoKfJx4s3nDb/vY=
