@@ -15,7 +15,7 @@ COPY --from=builder \
 
 WORKDIR $ARTIFACTS_DIR
 
-RUN mv sns-to-slack-lambda bootstrap
+RUN mv cloudwatch-to-slack-lambda bootstrap
 RUN apk --no-cache add zip
 RUN zip -r cloudwatch-to-slack-lambda.zip bootstrap && rm bootstrap
 
