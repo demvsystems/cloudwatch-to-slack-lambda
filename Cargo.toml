@@ -1,5 +1,5 @@
 [package]
-name = "sns-to-slack-lambda"
+name = "cloudwatch-to-slack-lambda"
 version = "0.1.0"
 authors = ["snowiow <marcel.patzwahl+github@posteo.de>"]
 edition = "2018"
