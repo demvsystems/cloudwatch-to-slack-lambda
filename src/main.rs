@@ -75,7 +75,7 @@ fn send_slack_msg(msg: &str) -> Result<(), CustomError> {
     }
 }
 
-fn  base64_decode_raw_log_to_gzip(data: &str) -> Result<Vec<u8>, CustomError> {
+fn base64_decode_raw_log_to_gzip(data: &str) -> Result<Vec<u8>, CustomError> {
     use base64::decode;
 
     decode(data).map_err(|err| {
@@ -85,8 +85,8 @@ fn  base64_decode_raw_log_to_gzip(data: &str) -> Result<Vec<u8>, CustomError> {
 }
 
 fn gunzip_to_string(gzipped: Vec<u8>) -> Result<String, CustomError> {
-    use std::io::Read;
     use flate2::read::GzDecoder;
+    use std::io::Read;
 
     let mut raw_data = String::new();
     match GzDecoder::new(gzipped.as_slice()).read_to_string(&mut raw_data) {
@@ -126,7 +126,6 @@ fn send_slack_msg_from_logsdata(logs_data: CloudwatchLogsData) -> Result<(), Cus
 }
 
 fn handler(event: CloudwatchLogsEvent, _: Context) -> Result<(), CustomError> {
-
     if let Some(data) = event.aws_logs.data {
         base64_decode_raw_log_to_gzip(&data)
             .and_then(gunzip_to_string)
