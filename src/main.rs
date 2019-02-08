@@ -1,6 +1,7 @@
-use aws_lambda_events::event::sns::SnsEvent;
+use aws_lambda_events::event::cloudwatch_logs::{CloudwatchLogsData, CloudwatchLogsEvent};
 use dotenv::dotenv;
 use lambda_runtime::{error::LambdaErrorExt, lambda, Context};
+use log::error;
 use std::env;
 use std::error::Error;
 use std::fmt;
@@ -74,16 +75,62 @@ fn send_slack_msg(msg: &str) -> Result<(), CustomError> {
     }
 }
 
-fn handler(event: SnsEvent, _: Context) -> Result<(), CustomError> {
-    use log::error;
+fn base64_decode_raw_log_to_gzip(data: &str) -> Result<Vec<u8>, CustomError> {
+    use base64::decode;
 
-    for record in event.records {
-        if let Some(msg) = record.sns.message {
-            if let Err(err) = send_slack_msg(&msg) {
-                error!("{}", err);
-                return Err(err);
-            }
+    decode(data).map_err(|err| {
+        error!("Couldn't base64 decode aws log data: {}", err);
+        CustomError::new(err.to_string())
+    })
+}
+
+fn gunzip_to_string(gzipped: Vec<u8>) -> Result<String, CustomError> {
+    use flate2::read::GzDecoder;
+    use std::io::Read;
+
+    let mut raw_data = String::new();
+    match GzDecoder::new(gzipped.as_slice()).read_to_string(&mut raw_data) {
+        Ok(_) => Ok(raw_data),
+        Err(err) => {
+            error!("Couldn't gunzip decoded aws log data: {}", err);
+            Err(CustomError::new(err.to_string()))
         }
+    }
+}
+
+fn parse_string_to_logsdata(gunzipped: String) -> Result<CloudwatchLogsData, CustomError> {
+    use serde_json::from_str;
+
+    from_str(&gunzipped).map_err(|err| {
+        error!(
+            "Couldn't create CloudwatchLogsData from gunzipped json: {}",
+            err,
+        );
+        CustomError::new(err.to_string())
+    })
+}
+
+fn send_slack_msg_from_logsdata(logs_data: CloudwatchLogsData) -> Result<(), CustomError> {
+    let msgs = logs_data
+        .log_events
+        .iter()
+        .filter_map(|logs_log_event| logs_log_event.message.clone());
+    for msg in msgs {
+        if let Err(err) = send_slack_msg(&msg) {
+            error!("{}", err);
+            return Err(err);
+        }
+    }
+
+    Ok(())
+}
+
+fn handler(event: CloudwatchLogsEvent, _: Context) -> Result<(), CustomError> {
+    if let Some(data) = event.aws_logs.data {
+        base64_decode_raw_log_to_gzip(&data)
+            .and_then(gunzip_to_string)
+            .and_then(parse_string_to_logsdata)
+            .and_then(send_slack_msg_from_logsdata)?;
     }
     Ok(())
 }

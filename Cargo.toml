@@ -1,5 +1,5 @@
 [package]
-name = "sns-to-slack-lambda"
+name = "cloudwatch-to-slack-lambda"
 version = "0.1.0"
 authors = ["snowiow <marcel.patzwahl+github@posteo.de>"]
 edition = "2018"
@@ -11,3 +11,6 @@ slack-hook = "0.8.0"
 dotenv = "0.13.0"
 simple_logger = "1.0.1"
 log = "0.4.6"
+base64 = "0.10.1"
+flate2 = "1.0.6"
+serde_json = "1.0.38"

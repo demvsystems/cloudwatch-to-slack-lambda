@@ -10,14 +10,14 @@ ENV ARTIFACTS_DIR=/artifacts
 RUN mkdir -p $ARTIFACTS_DIR
 
 COPY --from=builder \
-    /home/rust/src/target/x86_64-unknown-linux-musl/release/sns-to-slack-lambda \
+    /home/rust/src/target/x86_64-unknown-linux-musl/release/cloudwatch-to-slack-lambda \
     $ARTIFACTS_DIR
 
 WORKDIR $ARTIFACTS_DIR
 
 RUN mv sns-to-slack-lambda bootstrap
 RUN apk --no-cache add zip
-RUN zip -r sns-to-slack-lambda.zip bootstrap && rm bootstrap
+RUN zip -r cloudwatch-to-slack-lambda.zip bootstrap && rm bootstrap
 
 FROM package
 
@@ -29,4 +29,4 @@ RUN mkdir -p $EXPORT_DIR
 #Snapshot the directory
 VOLUME $EXPORT_DIR
 
-CMD find $ARTIFACTS_DIR -type f -name "sns-to-slack-lambda.zip" -exec cp '{}' $EXPORT_DIR \;
+CMD find $ARTIFACTS_DIR -type f -name "cloudwatch-to-slack-lambda.zip" -exec cp '{}' $EXPORT_DIR \;

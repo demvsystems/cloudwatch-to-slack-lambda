@@ -13,8 +13,8 @@ However there is a Dockerfile provided with this repository to automate the
 build. Switch into the cloned repository and execute:
 
 ```sh
-docker build -t sns-to-slack-lambda .
-docker run -v /tmp/artifacts:/export sns-to-slack-lambda
+docker build -t cloudwatch-to-slack-lambda .
+docker run -v /tmp/artifacts:/export cloudwatch-to-slack-lambda
 ```
 
 This will produce a `sns-to-slack-lambda.zip` at `/tmp/artifacts` on your
@@ -23,7 +23,7 @@ system, which can be uploaded to aws lambda.
 ## Configuration
 The webhook, channel and username must be set via environment
 variables. There is also a log level to be configured. See the
-[.env.dist](https://github.com/demvsystems/sns-to-slack-lambda/blob/master/.env.dist)
+[.env.dist](https://github.com/demvsystems/cloudwatch-to-slack-lambda/blob/master/.env.dist)
 for the exact keys.
 
 #### SLACK_WEBHOOK
@@ -43,6 +43,7 @@ How many information should be logged. Valid values are:
 - info
 - warn
 - error  
+  
 default: info
 
 ## Infrastructure

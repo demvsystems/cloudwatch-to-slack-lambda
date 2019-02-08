@@ -11,8 +11,8 @@ services:
 - docker
 cache: cargo
 before_deploy:
-- docker build -t sns-to-slack-lambda .
-- docker run -v /tmp/artifacts:/export sns-to-slack-lambda
+- docker build -t cloudwatch-to-slack-lambda .
+- docker run -v /tmp/artifacts:/export cloudwatch-to-slack-lambda
 deploy:
   provider: s3
   access_key_id: $AWS_ACCESS_KEY_ID
