@@ -23,11 +23,11 @@ jobs:
             - "./target"
 workflows:
   version: 2
-  test_and_deploy:
+  deploy:
     jobs:
       - deploy:
-    filters:
-      tags:
-        only: /^v\d+\.\d+\.\d+/
-      branches:
-        ignore: /.*/
+        filters:
+          tags:
+            only: /^v\d+\.\d+\.\d+/
+          branches:
+            ignore: /.*/
