@@ -1,0 +1,33 @@
+version: 2.1
+orbs:
+  aws-s3: circleci/aws-s3@1.0.9
+jobs:
+  deploy:
+    docker:
+      - image: softprops/lambda-rust
+    steps:
+      - checkout
+      - restore_cache:
+          key: project-cache
+      - run:
+          name: Build with Lambda Docker Container
+          command: |
+            /usr/local/bin/build.sh
+      - aws-s3/copy:
+          from: target/lambda/release/cloudwatch-to-slack-lambda.zip
+          to: "s3://$BUCKET"
+      - save_cache:
+          key: project-cache
+          paths:
+            - "~/.cargo"
+            - "./target"
+workflows:
+  version: 2
+  test_and_deploy:
+    jobs:
+      - deploy:
+    filters:
+      tags:
+        only: /^v\d+\.\d+\.\d+/
+      branches:
+        ignore: /.*/
